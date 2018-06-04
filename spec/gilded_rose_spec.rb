@@ -95,6 +95,77 @@ RSpec.describe GildedRose do
     end
   end
 
+  # never more than 50 quality
+  # when days_remaining > 0, quality increases by 1
+  # when between 0 and -10 quality increases by 2.
+  # when less than -10 quality increase 3 times base
+
+  context "Aged Wine" do
+    it "before sell date" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: 5, quality: 10)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: 4, quality: 11)
+    end
+
+    it "with max quality" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: 5, quality: 50)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: 4, quality: 50)
+    end
+
+    it "on sell date" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: 0, quality: 10)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: -1, quality: 12)
+    end
+
+    it "on sell date near max quality" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: 0, quality: 49)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: -1, quality: 50)
+    end
+
+    it "on sell date with max quality" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: 0, quality: 50)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: -1, quality: 50)
+    end
+
+    it "5 days after sell date" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: -5, quality: 10)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: -6, quality: 12)
+    end
+
+    it "10 days after sell date" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: -10, quality: 10)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: -11, quality: 13)
+    end
+
+    it "after sell date with max quality" do
+      gilded_rose = GildedRose.new(name: "Aged Wine", days_remaining: -10, quality: 50)
+
+      gilded_rose.tick
+
+      expect(gilded_rose).to have_attributes(days_remaining: -11, quality: 50)
+    end
+  end
+
   context "Sulfuras" do
     it "before sell date" do
       gilded_rose = GildedRose.new(name: "Sulfuras, Hand of Ragnaros", days_remaining: 5, quality: 80)
@@ -220,7 +291,7 @@ RSpec.describe GildedRose do
   end
 
   context "Conjured Mana" do
-    xit "before sell date" do
+    it "before sell date" do
       gilded_rose = GildedRose.new(name: "Conjured Mana Cake", days_remaining: 5, quality: 10)
 
       gilded_rose.tick
@@ -228,7 +299,7 @@ RSpec.describe GildedRose do
       expect(gilded_rose).to have_attributes(days_remaining: 4, quality: 8)
     end
 
-    xit "before sell date at zero quality" do
+    it "before sell date at zero quality" do
       gilded_rose = GildedRose.new(name: "Conjured Mana Cake", days_remaining: 5, quality: 0)
 
       gilded_rose.tick
@@ -236,7 +307,7 @@ RSpec.describe GildedRose do
       expect(gilded_rose).to have_attributes(days_remaining: 4, quality: 0)
     end
 
-    xit "on sell date" do
+    it "on sell date" do
       gilded_rose = GildedRose.new(name: "Conjured Mana Cake", days_remaining: 0, quality: 10)
 
       gilded_rose.tick
@@ -244,7 +315,7 @@ RSpec.describe GildedRose do
       expect(gilded_rose).to have_attributes(days_remaining: -1, quality: 6)
     end
 
-    xit "on sell date at zero quality" do
+    it "on sell date at zero quality" do
       gilded_rose = GildedRose.new(name: "Conjured Mana Cake", days_remaining: 0, quality: 0)
 
       gilded_rose.tick
@@ -252,7 +323,7 @@ RSpec.describe GildedRose do
       expect(gilded_rose).to have_attributes(days_remaining: -1, quality: 0)
     end
 
-    xit "after sell date" do
+    it "after sell date" do
       gilded_rose = GildedRose.new(name: "Conjured Mana Cake", days_remaining: -10, quality: 10)
 
       gilded_rose.tick
@@ -260,7 +331,7 @@ RSpec.describe GildedRose do
       expect(gilded_rose).to have_attributes(days_remaining: -11, quality: 6)
     end
 
-    xit "after sell date at zero quality" do
+    it "after sell date at zero quality" do
       gilded_rose = GildedRose.new(name: "Conjured Mana Cake", days_remaining: -10, quality: 0)
 
       gilded_rose.tick
